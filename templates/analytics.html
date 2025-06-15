@@ -1,0 +1,256 @@
+{% extends "base.html" %}
+
+{% block title %}Аналитика - ChefApp{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4"><i class="bi bi-graph-up"></i> Аналитика</h2>
+    
+    <div class="row">
+        <div class="col-md-12 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="card-title mb-0">Отчет по поварам</h5>
+                        <div class="btn-group">
+                            <button class="btn btn-outline-primary active" onclick="showWeeklyReport()">Неделя</button>
+                            <button class="btn btn-outline-primary" onclick="showMonthlyReport()">Месяц</button>
+                        </div>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Повар</th>
+                                    <th>Отработано часов</th>
+                                    <th>Рабочих дней</th>
+                                    <th>Выходных</th>
+                                    <th>Утренних смен</th>
+                                    <th>Вечерних смен</th>
+                                    <th>Ночных смен</th>
+                                    <th>Детали</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Иван Петров</td>
+                                    <td>42</td>
+                                    <td>5</td>
+                                    <td>2</td>
+                                    <td>3</td>
+                                    <td>2</td>
+                                    <td>0</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="showChefDetails('ivan')">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Петр Иванов</td>
+                                    <td>38</td>
+                                    <td>4</td>
+                                    <td>3</td>
+                                    <td>2</td>
+                                    <td>2</td>
+                                    <td>0</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="showChefDetails('petr')">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Анна Сидорова</td>
+                                    <td>40</td>
+                                    <td>5</td>
+                                    <td>2</td>
+                                    <td>2</td>
+                                    <td>2</td>
+                                    <td>1</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="showChefDetails('anna')">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Распределение смен</h5>
+                    <canvas id="shiftsChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Отработанные часы</h5>
+                    <canvas id="hoursChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно с деталями повара -->
+<div class="modal fade" id="chefDetailsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Детали работы повара</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Расписание на неделю</h6>
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>День</th>
+                                    <th>Смена</th>
+                                    <th>Часы</th>
+                                </tr>
+                            </thead>
+                            <tbody id="chefSchedule">
+                                <!-- Здесь будет расписание -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Статистика</h6>
+                        <ul class="list-group">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Средняя продолжительность смены
+                                <span class="badge bg-primary rounded-pill">8.5 ч</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Самая длинная смена
+                                <span class="badge bg-primary rounded-pill">10 ч</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Самая короткая смена
+                                <span class="badge bg-primary rounded-pill">6 ч</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Переработка
+                                <span class="badge bg-warning rounded-pill">2 ч</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Инициализация графиков
+document.addEventListener('DOMContentLoaded', function() {
+    // График распределения смен
+    const shiftsCtx = document.getElementById('shiftsChart').getContext('2d');
+    new Chart(shiftsCtx, {
+        type: 'pie',
+        data: {
+            labels: ['Утренние', 'Вечерние', 'Ночные'],
+            datasets: [{
+                data: [7, 6, 1],
+                backgroundColor: ['#4CAF50', '#2196F3', '#9C27B0']
+            }]
+        }
+    });
+    
+    // График отработанных часов
+    const hoursCtx = document.getElementById('hoursChart').getContext('2d');
+    new Chart(hoursCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Иван', 'Петр', 'Анна'],
+            datasets: [{
+                label: 'Отработано часов',
+                data: [42, 38, 40],
+                backgroundColor: '#4CAF50'
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+});
+
+function showChefDetails(chefId) {
+    const modal = new bootstrap.Modal(document.getElementById('chefDetailsModal'));
+    const scheduleBody = document.getElementById('chefSchedule');
+    
+    // Здесь можно загрузить данные о конкретном поваре
+    scheduleBody.innerHTML = `
+        <tr>
+            <td>Понедельник</td>
+            <td>Утренняя</td>
+            <td>8:00 - 16:00</td>
+        </tr>
+        <tr>
+            <td>Вторник</td>
+            <td>Вечерняя</td>
+            <td>16:00 - 00:00</td>
+        </tr>
+        <tr>
+            <td>Среда</td>
+            <td>Выходной</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td>Четверг</td>
+            <td>Утренняя</td>
+            <td>8:00 - 16:00</td>
+        </tr>
+        <tr>
+            <td>Пятница</td>
+            <td>Вечерняя</td>
+            <td>16:00 - 00:00</td>
+        </tr>
+        <tr>
+            <td>Суббота</td>
+            <td>Выходной</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td>Воскресенье</td>
+            <td>Утренняя</td>
+            <td>8:00 - 16:00</td>
+        </tr>
+    `;
+    
+    modal.show();
+}
+
+function showWeeklyReport() {
+    // Здесь можно добавить логику для отображения недельного отчета
+    document.querySelectorAll('.btn-group .btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+}
+
+function showMonthlyReport() {
+    // Здесь можно добавить логику для отображения месячного отчета
+    document.querySelectorAll('.btn-group .btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+}
+</script>
+{% endblock %}
+{% endblock %} 

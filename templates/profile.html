@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Профиль{% endblock %}
+{% block content %}
+<h2>Профиль</h2>
+{% if user %}
+<div class="mb-3 text-center">
+  {% if user.avatar %}
+    <img src="{{ url_for('static', filename='avatars/' ~ user.avatar) }}" alt="Аватар" class="rounded-circle" width="120" height="120">
+  {% else %}
+    <img src="https://ui-avatars.com/api/?name={{ user.name|urlencode }}&size=120" alt="Аватар" class="rounded-circle" width="120" height="120">
+  {% endif %}
+</div>
+<ul class="list-group mb-4">
+  <li class="list-group-item"><strong>Имя:</strong> {{ user.name }}</li>
+  <li class="list-group-item"><strong>Телефон:</strong> {{ user.phone }}</li>
+  <li class="list-group-item"><strong>Роль:</strong> {{ user.role }}</li>
+  {% if user.org %}<li class="list-group-item"><strong>Организация:</strong> {{ user.org }}</li>{% endif %}
+</ul>
+<div class="mb-3">
+  <a href="/edit_profile" class="btn btn-outline-main">Редактировать профиль</a>
+</div>
+{% if user.role == 'Шеф-повар' %}
+<div class="mb-3">
+  <a href="/invite" class="btn btn-main">Пригласить сотрудника в команду</a>
+</div>
+{% endif %}
+{% else %}
+<p>Пользователь не найден.</p>
+{% endif %}
+{% endblock %} 

@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="{{ g.get('lang', 'ru') }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ChefApp{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f8fafc 0%, #e0e7ef 100%);
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+            color: #2d2d2d;
+        }
+        .culinary-anim {
+            width: 90px;
+            height: 90px;
+            margin-right: 18px;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(255,179,71,0.10);
+            background: #fffbe6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .culinary-anim img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+        }
+        .navbar, header {
+            background: rgba(255,255,255,0.85) !important;
+            backdrop-filter: blur(8px);
+            border-bottom: 1.5px solid #e0e7ef;
+            box-shadow: 0 2px 16px rgba(99,102,241,0.06);
+        }
+        .navbar-brand {
+            font-weight: 700;
+            color: #b86b1b !important;
+            font-size: 1.7rem;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+        }
+        .chef-hat {
+            width: 44px; height: 44px; margin-right: 12px; vertical-align: middle;
+        }
+        .nav-link, .dropdown-item {
+            color: #4b3c1a !important;
+            font-weight: 500;
+            font-size: 1.13rem;
+            border-radius: 1.5rem;
+            transition: background 0.2s, color 0.2s;
+        }
+        .nav-link.active, .dropdown-item.active {
+            color: #fff !important;
+            background: linear-gradient(90deg, #ffb347 0%, #ffcc33 100%) !important;
+        }
+        .nav-link:hover, .dropdown-item:hover {
+            color: #fff !important;
+            background: linear-gradient(90deg, #ffcc33 0%, #ffb347 100%) !important;
+        }
+        .btn-main {
+            background: linear-gradient(90deg, #ffb347 0%, #ffcc33 100%);
+            color: #6d4c1b;
+            border: none;
+            font-weight: 600;
+            border-radius: 2rem;
+            padding: 0.6rem 1.7rem;
+            font-size: 1.15rem;
+            box-shadow: 0 2px 8px rgba(255,179,71,0.10);
+            transition: box-shadow 0.2s, background 0.2s, color 0.2s;
+        }
+        .btn-main:hover, .btn-main:focus {
+            background: linear-gradient(90deg, #ffcc33 0%, #ffb347 100%);
+            color: #fff;
+            box-shadow: 0 6px 24px rgba(255,179,71,0.18);
+        }
+        .card, .list-group-item, .table {
+            border-radius: 1.3rem;
+            box-shadow: 0 2px 12px rgba(99,102,241,0.07);
+            background: #fff;
+            border: none;
+        }
+        h2, h3, h4, h5 {
+            color: #b86b1b;
+            font-family: 'Georgia', serif;
+            font-weight: 700;
+        }
+        .footer {
+            background: rgba(255,255,255,0.85);
+            color: #b86b1b;
+            text-align: center;
+            padding: 1.2rem 0 0.7rem 0;
+            font-size: 1.1rem;
+            border-top: 1.5px solid #e0e7ef;
+            margin-top: 2rem;
+            backdrop-filter: blur(8px);
+        }
+        .footer .chef-hat {
+            width: 28px; height: 28px; margin-right: 6px;
+        }
+        .profile-dropdown .dropdown-menu {
+            min-width: 180px;
+        }
+        .card, .form-control, .form-select {
+            transition: box-shadow 0.2s, border-color 0.2s;
+        }
+        .form-control:focus, .form-select:focus {
+            box-shadow: 0 0 0 2px #ffb34733;
+            border-color: #ffb347;
+        }
+        .table-striped>tbody>tr:nth-of-type(odd) {
+            background-color: #fffbe6;
+        }
+        .accordion-button:not(.collapsed) {
+            background: linear-gradient(90deg, #ffb347 0%, #ffcc33 100%);
+            color: #6d4c1b;
+        }
+        @media (max-width: 991px) {
+            .navbar-nav .nav-link { font-size: 1rem; }
+            .navbar, header { padding-left: 0.5rem; padding-right: 0.5rem; }
+        }
+        @media (max-width: 600px) {
+            .navbar-brand { font-size: 1.2rem; }
+            .footer { font-size: 0.95rem; }
+            h2, h3, h4, h5 { font-size: 1.1rem; }
+        }
+        .fade-in {
+            animation: fadeIn 0.7s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: none; }
+        }
+        /* Sidebar for main page */
+        .main-sidebar {
+            position: fixed;
+            top: 0; right: 0;
+            height: 100vh;
+            width: 340px;
+            background: rgba(255,255,255,0.97);
+            box-shadow: -2px 0 16px rgba(255,179,71,0.10);
+            z-index: 1050;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .main-sidebar .chef-hat {
+            width: 60px; height: 60px; margin-bottom: 10px;
+        }
+        .main-sidebar .logo-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #b86b1b;
+            margin-bottom: 1.5rem;
+        }
+        .main-sidebar .btn-main {
+            width: 80%;
+            margin-bottom: 1.2rem;
+            font-size: 1.2rem;
+        }
+        .main-sidebar .side-icons {
+            margin: 2rem 0 1rem 0;
+            font-size: 2rem;
+            color: #ffb347;
+        }
+        .main-sidebar .side-icons i {
+            margin: 0 0.5rem;
+        }
+        @media (max-width: 991px) {
+            .main-sidebar { width: 100vw; height: auto; position: static; box-shadow: none; flex-direction: row; justify-content: space-around; padding: 1.5rem 0; }
+            .main-sidebar .btn-main { width: 40vw; min-width: 120px; }
+        }
+    </style>
+    {% block head %}{% endblock %}
+</head>
+<body>
+{% if request.endpoint in ['index', 'login_page', 'register_page'] %}
+  <header class="w-100 mb-4" style="background: linear-gradient(90deg, #fffbe6 0%, #ffcc33 100%); box-shadow: 0 2px 16px rgba(255,179,71,0.10);">
+    <div class="container py-3 d-flex flex-column flex-md-row align-items-center justify-content-between">
+      <div class="d-flex align-items-center mb-3 mb-md-0">
+        <img src="https://cdn-icons-png.flaticon.com/512/3075/3075977.png" alt="Chef Hat" style="width:70px;height:70px;">
+        <span class="fw-bold ms-3" style="font-size:2.2rem;color:#b86b1b;letter-spacing:2px;">ChefApp</span>
+      </div>
+      <div class="text-end" style="font-size:1.2rem;color:#b86b1b;font-weight:600;text-shadow:0 2px 8px #fffbe6;">
+        Сделано при поддержке <span style="color:#ff9800;">Министерство Кулинарных Дел</span>
+      </div>
+    </div>
+  </header>
+  <div class="d-flex flex-column justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="d-flex flex-column gap-3 w-100" style="max-width:340px;">
+      <div class="d-flex gap-2 mb-3">
+        <button id="showLogin" class="btn btn-main btn-lg w-100" style="font-size:1.2rem;" type="button"><i class="bi bi-box-arrow-in-right"></i> Вход</button>
+        <button id="showRegister" class="btn btn-main btn-lg w-100" style="font-size:1.2rem;" type="button"><i class="bi bi-person-plus"></i> Регистрация</button>
+      </div>
+      <div id="loginFormBlock" style="display:none;">
+        <form method="POST" action="/login" autocomplete="off" class="card p-3 shadow-sm border-0 mb-2">
+          <div class="mb-3"><input name="name" class="form-control form-control-lg" placeholder="Имя" required></div>
+          <div class="mb-3"><input name="password" type="password" class="form-control form-control-lg" placeholder="Пароль" required></div>
+          <button type="submit" class="btn btn-main btn-lg w-100">Войти</button>
+        </form>
+      </div>
+      <div id="registerFormBlock" style="display:none;">
+        <form method="POST" action="/register" autocomplete="off" class="card p-3 shadow-sm border-0 mb-2">
+          <div class="mb-3"><input name="name" class="form-control form-control-lg" placeholder="Имя" required></div>
+          <div class="mb-3">
+            <select name="role" class="form-select form-select-lg" required>
+              <option value="">Выберите должность</option>
+              <option>Шеф-повар</option>
+              <option>Су-шеф</option>
+              <option>Повар</option>
+              <option>Кондитер</option>
+              <option>Пекарь</option>
+              <option>Кассир</option>
+              <option>Бармен</option>
+              <option>Официант</option>
+              <option>Администратор</option>
+              <option>Курьер</option>
+              <option>Мойщик посуды</option>
+              <option>Заготовщик</option>
+              <option>Кладовщик</option>
+              <option>Уборщик</option>
+              <option>Технолог</option>
+              <option>Менеджер</option>
+              <option>Другое</option>
+            </select>
+          </div>
+          <div class="mb-3"><input name="org" class="form-control form-control-lg" placeholder="Название организации" required></div>
+          <div class="mb-3"><input name="phone" type="tel" class="form-control form-control-lg" placeholder="Телефон" required></div>
+          <div class="mb-3"><input name="password" type="password" class="form-control form-control-lg" placeholder="Пароль" required></div>
+          <div class="mb-3"><input name="confirm" type="password" class="form-control form-control-lg" placeholder="Подтвердите пароль" required></div>
+          <button type="submit" class="btn btn-main btn-lg w-100">Зарегистрироваться</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script>
+    const showLogin = document.getElementById('showLogin');
+    const showRegister = document.getElementById('showRegister');
+    const loginFormBlock = document.getElementById('loginFormBlock');
+    const registerFormBlock = document.getElementById('registerFormBlock');
+    if (showLogin && showRegister && loginFormBlock && registerFormBlock) {
+      showLogin.onclick = function() {
+        loginFormBlock.style.display = 'block';
+        registerFormBlock.style.display = 'none';
+        showLogin.classList.add('active');
+        showRegister.classList.remove('active');
+      };
+      showRegister.onclick = function() {
+        registerFormBlock.style.display = 'block';
+        loginFormBlock.style.display = 'none';
+        showRegister.classList.add('active');
+        showLogin.classList.remove('active');
+      };
+    }
+  </script>
+{% else %}
+{% set is_logged_in = request.cookies.get('logged_in') %}
+<nav class="navbar navbar-expand-lg navbar-light fixed-top shadow-sm">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">
+      <img src="https://cdn-icons-png.flaticon.com/512/3075/3075977.png" class="chef-hat" alt="Chef Hat">
+      ChefApp
+    </a>
+    {% if is_logged_in %}
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link" href="/tasks"><i class="bi bi-list-task"></i> Задачи</a></li>
+        <li class="nav-item"><a class="nav-link" href="/shifts"><i class="bi bi-calendar2-week"></i> Смены</a></li>
+        <li class="nav-item"><a class="nav-link" href="/purchases"><i class="bi bi-basket"></i> Закупки</a></li>
+        <li class="nav-item"><a class="nav-link" href="/chat"><i class="bi bi-chat-dots"></i> Чат</a></li>
+        <li class="nav-item"><a class="nav-link" href="/notes"><i class="bi bi-journal-text"></i> Заметки</a></li>
+        <li class="nav-item"><a class="nav-link" href="/calculator"><i class="bi bi-calculator"></i> Калькулятор</a></li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('analytics_page') }}">
+                <i class="fas fa-chart-line"></i> Аналитика
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('invite') }}">
+                <i class="bi bi-person-plus"></i> Пригласить сотрудника
+            </a>
+        </li>
+        {% if user.role == 'Шеф-повар' %}
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('team_page') }}">
+                <i class="bi bi-people"></i> Управление командой
+            </a>
+        </li>
+        {% endif %}
+      </ul>
+      <ul class="navbar-nav mb-2 mb-lg-0">
+        <li class="nav-item dropdown profile-dropdown">
+          <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-person-circle" style="font-size:1.5rem;"></i>
+            <span class="ms-2">Профиль</span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+            <li><a class="dropdown-item" href="/profile"><i class="bi bi-person"></i> Мой профиль</a></li>
+            <li><a class="dropdown-item" href="/logout"><i class="bi bi-box-arrow-right"></i> Выйти</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    {% else %}
+    <div class="d-flex gap-2">
+      <a href="/login" class="btn btn-main">Вход</a>
+      <a href="/register" class="btn btn-outline-main">Регистрация</a>
+    </div>
+    {% endif %}
+  </div>
+</nav>
+{% endif %}
+<div class="container" style="padding-top: 90px;">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+</div>
+<div class="footer">
+  <img src="https://cdn-icons-png.flaticon.com/512/3075/3075977.png" class="chef-hat" alt="Chef Hat">
+  Сделано при поддержке <b>Министерство Кулинарных Дел</b> &nbsp;|&nbsp; <i class="bi bi-envelope"></i> support@culinary.gov
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html> 

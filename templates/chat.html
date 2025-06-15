@@ -1,0 +1,239 @@
+{% extends "base.html" %}
+
+{% block title %}Чат - ChefApp{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4"><i class="bi bi-chat-dots"></i> Чат</h2>
+    
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="card-title mb-0">Чаты</h5>
+                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#newChatModal">
+                            <i class="bi bi-plus-circle"></i> Новый чат
+                        </button>
+                    </div>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Поиск чатов...">
+                        <button class="btn btn-outline-secondary" type="button"><i class="bi bi-search"></i></button>
+                    </div>
+                    <div class="list-group">
+                        <a href="#" class="list-group-item list-group-item-action active" onclick="switchChat('general')">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">Общий чат</h6>
+                                <small>3 мин назад</small>
+                            </div>
+                            <p class="mb-1">Последнее сообщение в общем чате...</p>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action" onclick="switchChat('kitchen')">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">Кухня</h6>
+                                <small>1 час назад</small>
+                            </div>
+                            <p class="mb-1">Последнее сообщение в чате кухни...</p>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action" onclick="switchChat('bar')">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">Бар</h6>
+                                <small>2 часа назад</small>
+                            </div>
+                            <p class="mb-1">Последнее сообщение в чате бара...</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <div class="chat-header mb-3">
+                        <h5 class="card-title" id="currentChatTitle">Общий чат</h5>
+                        <div class="chat-info">
+                            <span class="badge bg-primary" id="chatType">Общий</span>
+                            <span class="text-muted ms-2" id="chatParticipants">Все участники</span>
+                        </div>
+                    </div>
+                    <div class="chat-messages p-3" style="height: 400px; overflow-y: auto;">
+                        <div class="message mb-3">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <img src="https://via.placeholder.com/40" class="rounded-circle" alt="User">
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <div class="d-flex justify-content-between">
+                                        <h6 class="mb-1">Иван</h6>
+                                        <small class="text-muted">10:30</small>
+                                    </div>
+                                    <p class="mb-1">Привет всем! Как дела?</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="message mb-3">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <img src="https://via.placeholder.com/40" class="rounded-circle" alt="User">
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <div class="d-flex justify-content-between">
+                                        <h6 class="mb-1">Петр</h6>
+                                        <small class="text-muted">10:31</small>
+                                    </div>
+                                    <p class="mb-1">Всё отлично! Готовимся к обеду.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input mt-3">
+                        <form class="d-flex" id="messageForm">
+                            <input type="text" class="form-control me-2" placeholder="Введите сообщение..." required>
+                            <button type="submit" class="btn btn-main"><i class="bi bi-send"></i></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно создания нового чата -->
+<div class="modal fade" id="newChatModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Создать новый чат</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="newChatForm">
+                    <div class="mb-3">
+                        <label for="chatName" class="form-label">Название чата</label>
+                        <input type="text" class="form-control" id="chatName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Выберите участников</label>
+                        <div class="list-group">
+                            <label class="list-group-item">
+                                <input class="form-check-input me-1" type="checkbox" value="ivan">
+                                Иван (Шеф-повар)
+                            </label>
+                            <label class="list-group-item">
+                                <input class="form-check-input me-1" type="checkbox" value="petr">
+                                Петр (Повар)
+                            </label>
+                            <label class="list-group-item">
+                                <input class="form-check-input me-1" type="checkbox" value="anna">
+                                Анна (Кондитер)
+                            </label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-main" onclick="createNewChat()">Создать</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+function switchChat(chatId) {
+    const chatTitle = document.getElementById('currentChatTitle');
+    const chatType = document.getElementById('chatType');
+    const chatParticipants = document.getElementById('chatParticipants');
+    
+    // Обновляем активный чат в списке
+    document.querySelectorAll('.list-group-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    event.currentTarget.classList.add('active');
+    
+    // Обновляем информацию о чате
+    switch(chatId) {
+        case 'general':
+            chatTitle.textContent = 'Общий чат';
+            chatType.textContent = 'Общий';
+            chatParticipants.textContent = 'Все участники';
+            break;
+        case 'kitchen':
+            chatTitle.textContent = 'Кухня';
+            chatType.textContent = 'Групповой';
+            chatParticipants.textContent = 'Иван, Петр, Анна';
+            break;
+        case 'bar':
+            chatTitle.textContent = 'Бар';
+            chatType.textContent = 'Групповой';
+            chatParticipants.textContent = 'Петр, Анна';
+            break;
+    }
+}
+
+function createNewChat() {
+    const chatName = document.getElementById('chatName').value;
+    const selectedUsers = Array.from(document.querySelectorAll('.form-check-input:checked'))
+        .map(checkbox => checkbox.value);
+    
+    if (chatName && selectedUsers.length > 0) {
+        // Создаем новый элемент чата
+        const chatList = document.querySelector('.list-group');
+        const newChat = document.createElement('a');
+        newChat.href = '#';
+        newChat.className = 'list-group-item list-group-item-action';
+        newChat.onclick = function() { switchChat('new'); };
+        newChat.innerHTML = `
+            <div class="d-flex w-100 justify-content-between">
+                <h6 class="mb-1">${chatName}</h6>
+                <small>Только что</small>
+            </div>
+            <p class="mb-1">Новый чат создан</p>
+        `;
+        
+        chatList.appendChild(newChat);
+        
+        // Закрываем модальное окно
+        const modal = bootstrap.Modal.getInstance(document.getElementById('newChatModal'));
+        modal.hide();
+        
+        // Очищаем форму
+        document.getElementById('newChatForm').reset();
+    }
+}
+
+// Обработка отправки сообщений
+document.getElementById('messageForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const input = this.querySelector('input');
+    const message = input.value;
+    
+    if (message.trim()) {
+        const chatMessages = document.querySelector('.chat-messages');
+        const newMessage = document.createElement('div');
+        newMessage.className = 'message mb-3';
+        newMessage.innerHTML = `
+            <div class="d-flex">
+                <div class="flex-shrink-0">
+                    <img src="https://via.placeholder.com/40" class="rounded-circle" alt="User">
+                </div>
+                <div class="flex-grow-1 ms-3">
+                    <div class="d-flex justify-content-between">
+                        <h6 class="mb-1">Вы</h6>
+                        <small class="text-muted">${new Date().toLocaleTimeString()}</small>
+                    </div>
+                    <p class="mb-1">${message}</p>
+                </div>
+            </div>
+        `;
+        
+        chatMessages.appendChild(newMessage);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        input.value = '';
+    }
+});
+</script>
+{% endblock %}
+{% endblock %} 

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Регистрация{% endblock %}
+{% block content %}
+<h2>Регистрация</h2>
+<form method="POST" class="mb-4" autocomplete="off" enctype="multipart/form-data">
+  <div class="mb-3"><input name="name" class="form-control" placeholder="Имя" required></div>
+  <div class="mb-3"><input name="phone" class="form-control" placeholder="Телефон" required></div>
+  <div class="mb-3">
+    <input name="avatar" type="file" class="form-control" accept="image/*" placeholder="Аватарка (необязательно)">
+  </div>
+  <div class="mb-3">
+    <select name="role" class="form-select" required>
+      <option value="">Выберите должность</option>
+      <option>Шеф-повар</option>
+      <option>Су-шеф</option>
+      <option>Повар</option>
+      <option>Кондитер</option>
+      <option>Пекарь</option>
+      <option>Кассир</option>
+      <option>Бармен</option>
+      <option>Официант</option>
+      <option>Администратор</option>
+      <option>Курьер</option>
+      <option>Мойщик посуды</option>
+      <option>Заготовщик</option>
+      <option>Кладовщик</option>
+      <option>Уборщик</option>
+      <option>Технолог</option>
+      <option>Менеджер</option>
+      <option>Другое</option>
+    </select>
+  </div>
+  <div class="mb-3"><input name="org" class="form-control" placeholder="Название организации" required></div>
+  <div class="mb-3"><input name="password" type="password" class="form-control" placeholder="Пароль" required></div>
+  <div class="mb-3"><input name="confirm" type="password" class="form-control" placeholder="Подтвердите пароль" required></div>
+  <button type="submit" class="btn btn-main w-100">Зарегистрироваться</button>
+</form>
+{% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
+{% endblock %} 

@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}Задачи - ChefApp{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4"><i class="bi bi-list-task"></i> Задачи</h2>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="card-title mb-0">Активные задачи</h5>
+                        <button class="btn btn-outline-danger" id="clearTasks">
+                            <i class="bi bi-trash"></i> Очистить все задачи
+                        </button>
+                    </div>
+                    <div class="list-group">
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">Подготовка инвентаря</h6>
+                                <small class="text-muted">Сегодня</small>
+                            </div>
+                            <p class="mb-1">Проверить и подготовить все необходимые инструменты для работы.</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">Статус: <span class="badge bg-warning">В процессе</span></small>
+                                <div class="btn-group">
+                                    <button class="btn btn-sm btn-success" onclick="updateTaskStatus(this, 'completed')">
+                                        <i class="bi bi-check-circle"></i> Выполнено
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" onclick="updateTaskStatus(this, 'failed')">
+                                        <i class="bi bi-x-circle"></i> Не выполнено
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">Проверка запасов</h6>
+                                <small class="text-muted">Завтра</small>
+                            </div>
+                            <p class="mb-1">Проверить наличие всех необходимых ингредиентов.</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">Статус: <span class="badge bg-secondary">Ожидает</span></small>
+                                <div class="btn-group">
+                                    <button class="btn btn-sm btn-success" onclick="updateTaskStatus(this, 'completed')">
+                                        <i class="bi bi-check-circle"></i> Выполнено
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" onclick="updateTaskStatus(this, 'failed')">
+                                        <i class="bi bi-x-circle"></i> Не выполнено
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Добавить задачу</h5>
+                    <form id="taskForm">
+                        <div class="mb-3">
+                            <label for="taskTitle" class="form-label">Название</label>
+                            <input type="text" class="form-control" id="taskTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="taskDescription" class="form-label">Описание</label>
+                            <textarea class="form-control" id="taskDescription" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="taskDate" class="form-label">Срок</label>
+                            <input type="date" class="form-control" id="taskDate">
+                        </div>
+                        <button type="submit" class="btn btn-main w-100">Добавить</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+function updateTaskStatus(button, status) {
+    const taskItem = button.closest('.list-group-item');
+    const statusBadge = taskItem.querySelector('.badge');
+    
+    if (status === 'completed') {
+        statusBadge.className = 'badge bg-success';
+        statusBadge.textContent = 'Выполнено';
+        taskItem.classList.add('bg-light');
+    } else if (status === 'failed') {
+        statusBadge.className = 'badge bg-danger';
+        statusBadge.textContent = 'Не выполнено';
+        taskItem.classList.add('bg-light');
+    }
+}
+
+document.getElementById('clearTasks').addEventListener('click', function() {
+    if (confirm('Вы уверены, что хотите удалить все задачи?')) {
+        const taskList = document.querySelector('.list-group');
+        taskList.innerHTML = '';
+    }
+});
+
+document.getElementById('taskForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const title = document.getElementById('taskTitle').value;
+    const description = document.getElementById('taskDescription').value;
+    const date = document.getElementById('taskDate').value;
+    
+    const taskList = document.querySelector('.list-group');
+    const newTask = document.createElement('div');
+    newTask.className = 'list-group-item';
+    newTask.innerHTML = `
+        <div class="d-flex w-100 justify-content-between">
+            <h6 class="mb-1">${title}</h6>
+            <small class="text-muted">${date || 'Без срока'}</small>
+        </div>
+        <p class="mb-1">${description}</p>
+        <div class="d-flex justify-content-between align-items-center">
+            <small class="text-muted">Статус: <span class="badge bg-secondary">Ожидает</span></small>
+            <div class="btn-group">
+                <button class="btn btn-sm btn-success" onclick="updateTaskStatus(this, 'completed')">
+                    <i class="bi bi-check-circle"></i> Выполнено
+                </button>
+                <button class="btn btn-sm btn-danger" onclick="updateTaskStatus(this, 'failed')">
+                    <i class="bi bi-x-circle"></i> Не выполнено
+                </button>
+            </div>
+        </div>
+    `;
+    
+    taskList.insertBefore(newTask, taskList.firstChild);
+    this.reset();
+});
+</script>
+{% endblock %}
+{% endblock %} 

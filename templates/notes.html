@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Заметки - ChefApp{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4"><i class="bi bi-journal-text"></i> Заметки</h2>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="card-title mb-0">Мои заметки</h5>
+                        <div class="btn-group">
+                            <button class="btn btn-outline-secondary active">Все</button>
+                            <button class="btn btn-outline-secondary">Важные</button>
+                            <button class="btn btn-outline-secondary">Архив</button>
+                        </div>
+                    </div>
+                    
+                    <div class="notes-list">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <h5 class="card-title">Рецепт нового блюда</h5>
+                                    <div class="btn-group">
+                                        <button class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></button>
+                                        <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                    </div>
+                                </div>
+                                <p class="card-text">Ингредиенты и процесс приготовления...</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">Создано: 15.06.2024</small>
+                                    <span class="badge bg-warning">Важное</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <h5 class="card-title">Список покупок</h5>
+                                    <div class="btn-group">
+                                        <button class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></button>
+                                        <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                    </div>
+                                </div>
+                                <p class="card-text">- Мясо<br>- Овощи<br>- Специи</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">Создано: 14.06.2024</small>
+                                    <span class="badge bg-secondary">Обычное</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Новая заметка</h5>
+                    <form>
+                        <div class="mb-3">
+                            <label for="noteTitle" class="form-label">Заголовок</label>
+                            <input type="text" class="form-control" id="noteTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="noteContent" class="form-label">Содержание</label>
+                            <textarea class="form-control" id="noteContent" rows="5"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="noteImportant">
+                                <label class="form-check-label" for="noteImportant">
+                                    Важная заметка
+                                </label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-main w-100">Сохранить</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

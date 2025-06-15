@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}{{ _('Учёт рабочего времени') }}{% endblock %}
+{% block content %}
+<div class="mb-4">
+  <h2>{{ _('Учёт рабочего времени') }}</h2>
+</div>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>{{ _('Пользователь') }}</th>
+      <th>{{ _('Дата') }}</th>
+      <th>{{ _('Время прихода') }}</th>
+      <th>{{ _('Время ухода') }}</th>
+      <th>{{ _('Опоздание') }}</th>
+      <th>{{ _('Штраф') }}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for day in all_days %}
+    <tr>
+      <td>{{ day.user.name }}</td>
+      <td>{{ day.date }}</td>
+      <td>{{ day.time_in or '-' }}</td>
+      <td>{{ day.time_out or '-' }}</td>
+      <td>{% if day.late %}<span class="badge bg-danger">{{ _('Да') }}</span>{% else %}{{ _('Нет') }}{% endif %}</td>
+      <td>{{ day.fine or 0 }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %} 

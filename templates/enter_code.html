@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}Подтверждение по SMS{% endblock %}
+{% block content %}
+<h2>Подтверждение по SMS</h2>
+<p>На номер <b>{{ phone }}</b> отправлен код подтверждения.</p>
+{% if code %}
+<div class="alert alert-info">Тестовый код: <b>{{ code }}</b></div>
+{% endif %}
+<form method="POST" class="mb-4" autocomplete="off">
+  <div class="mb-3"><input name="code" class="form-control" placeholder="Введите код" required></div>
+  <button type="submit" class="btn btn-main w-100">Подтвердить</button>
+</form>
+{% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
+{% endblock %} 

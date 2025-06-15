@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+{% block title %}Пригласить сотрудника - ChefApp{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4"><i class="bi bi-person-plus"></i> Пригласить сотрудника</h2>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Приглашение по ссылке</h5>
+                    <div class="mb-3">
+                        <label class="form-label">Ссылка для приглашения</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="inviteLink" value="{{ invite_link }}" readonly>
+                            <button class="btn btn-outline-primary" onclick="copyInviteLink()">
+                                <i class="bi bi-clipboard"></i>
+                            </button>
+                        </div>
+                        <small class="text-muted">Ссылка действительна 24 часа</small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Выберите роль</label>
+                        <select class="form-select" id="role">
+                            <option value="chef">Шеф-повар</option>
+                            <option value="sous_chef">Су-шеф</option>
+                            <option value="cook">Повар</option>
+                            <option value="waiter">Официант</option>
+                            <option value="manager">Менеджер</option>
+                            <option value="admin">Администратор</option>
+                            <option value="kitchen_helper">Помощник на кухне</option>
+                            <option value="dishwasher">Мойщик посуды</option>
+                            <option value="bartender">Бармен</option>
+                            <option value="hostess">Хостес</option>
+                            <option value="delivery">Курьер</option>
+                            <option value="storekeeper">Кладовщик</option>
+                            <option value="accountant">Бухгалтер</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-main" onclick="generateNewLink()">
+                        <i class="bi bi-link-45deg"></i> Сгенерировать новую ссылку
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">QR-код для приглашения</h5>
+                    <div class="text-center mb-3">
+                        <div id="qrcode" class="mb-3"></div>
+                        <button class="btn btn-outline-primary" onclick="downloadQR()">
+                            <i class="bi bi-download"></i> Скачать QR-код
+                        </button>
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i>
+                        Отсканируйте QR-код для быстрой регистрации. Код действителен 24 часа.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Активные приглашения</h5>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Роль</th>
+                                    <th>Ссылка</th>
+                                    <th>Создано</th>
+                                    <th>Истекает</th>
+                                    <th>Статус</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody id="activeInvites">
+                                <!-- Здесь будут отображаться активные приглашения -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+// Генерация QR-кода при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    generateQRCode();
+    loadActiveInvites();
+});
+
+function generateQRCode() {
+    const qrcodeDiv = document.getElementById('qrcode');
+    qrcodeDiv.innerHTML = '';
+    
+    const inviteLink = document.getElementById('inviteLink').value;
+    new QRCode(qrcodeDiv, {
+        text: inviteLink,
+        width: 200,
+        height: 200,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+    });
+}
+
+function copyInviteLink() {
+    const inviteLink = document.getElementById('inviteLink');
+    inviteLink.select();
+    document.execCommand('copy');
+    
+    // Показываем уведомление
+    const button = event.target.closest('button');
+    const originalText = button.innerHTML;
+    button.innerHTML = '<i class="bi bi-check"></i> Скопировано';
+    setTimeout(() => {
+        button.innerHTML = originalText;
+    }, 2000);
+}
+
+function generateNewLink() {
+    const role = document.getElementById('role').value;
+    fetch('/api/generate_invite', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ role: role })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.link) {
+            document.getElementById('inviteLink').value = data.link;
+            generateQRCode();
+            loadActiveInvites();
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+function downloadQR() {
+    const canvas = document.querySelector('#qrcode canvas');
+    const link = document.createElement('a');
+    link.download = 'invite-qr.png';
+    link.href = canvas.toDataURL();
+    link.click();
+}
+
+function loadActiveInvites() {
+    fetch('/api/active_invites')
+        .then(response => response.json())
+        .then(invites => {
+            const tbody = document.getElementById('activeInvites');
+            tbody.innerHTML = invites.map(invite => `
+                <tr>
+                    <td>${invite.role}</td>
+                    <td>${invite.code}</td>
+                    <td>${new Date(invite.created).toLocaleString()}</td>
+                    <td>${new Date(invite.expires).toLocaleString()}</td>
+                    <td><span class="badge bg-success">Активно</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-danger" onclick="revokeInvite('${invite.code}')">
+                            <i class="bi bi-x-circle"></i> Отозвать
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+function revokeInvite(code) {
+    if (confirm('Вы уверены, что хотите отозвать это приглашение?')) {
+        fetch(`/api/revoke_invite/${code}`, {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                loadActiveInvites();
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+}
+</script>
+{% endblock %}
+{% endblock %}

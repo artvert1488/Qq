@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}{{ _('Поиск смен') }}{% endblock %}
+{% block content %}
+<div class="mb-4">
+  <h2>{{ _('Поиск и фильтрация смен') }}</h2>
+</div>
+<form method="POST" class="mb-4">
+  {{ form.hidden_tag() }}
+  <div class="row g-2">
+    <div class="col-md-4">{{ form.user_id(class="form-select") }}</div>
+    <div class="col-md-4">{{ form.role_on_shift(class="form-select") }}</div>
+    <div class="col-md-4">{{ form.date(class="form-control", placeholder=_('Дата')) }}</div>
+    <div class="col-md-12 mt-2"><button type="submit" class="btn btn-main w-100">{{ _('Фильтровать') }}</button></div>
+  </div>
+</form>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>{{ _('Пользователь') }}</th>
+      <th>{{ _('Дата') }}</th>
+      <th>{{ _('Время') }}</th>
+      <th>{{ _('Роль на смене') }}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for shift in shifts %}
+    <tr>
+      <td>{{ shift.user.name }}</td>
+      <td>{{ shift.date }}</td>
+      <td>{{ shift.time }}</td>
+      <td>{{ _(shift.role_on_shift) }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %} 

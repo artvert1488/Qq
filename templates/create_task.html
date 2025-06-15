@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}{{ _('Создать задачу') }}{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card p-4 mt-4">
+      <h2 class="mb-4 text-center">{{ _('Создать задачу') }}</h2>
+      <form method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+          {{ form.description.label(class="form-label") }}
+          {{ form.description(class="form-control") }}
+        </div>
+        <div class="mb-3">
+          {{ form.user_id.label(class="form-label") }}
+          {{ form.user_id(class="form-select") }}
+        </div>
+        <div class="mb-3">
+          {{ form.file.label(class="form-label") }}
+          {{ form.file(class="form-control") }}
+        </div>
+        <button type="submit" class="btn btn-main w-100">{{ _('Создать задачу') }}</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %} 

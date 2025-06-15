@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}Chef App{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card p-5 mt-5 text-center">
+      <h1 class="mb-4">{{ _('Добро пожаловать в Chef App!') }}</h1>
+      <p class="lead mb-4">{{ _('Управляйте командой, задачами, сменами, закупками и общением в одном современном приложении для кухни.') }}</p>
+      <a href="/register" class="btn btn-main btn-lg me-2">{{ _('Регистрация') }}</a>
+      <a href="/login" class="btn btn-outline-primary btn-lg">{{ _('Вход') }}</a>
+    </div>
+  </div>
+</div>
+{% endblock %} 

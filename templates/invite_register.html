@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Регистрация по приглашению{% endblock %}
+{% block content %}
+<h2>Регистрация по приглашению</h2>
+{% if invite %}
+<ul class="list-group mb-4">
+  <li class="list-group-item"><strong>Имя:</strong> {{ invite.name }}</li>
+  <li class="list-group-item"><strong>Должность:</strong> {{ invite.role }}</li>
+  <li class="list-group-item"><strong>Организация:</strong> {{ invite.org }}</li>
+</ul>
+<form method="POST" class="mb-4" autocomplete="off">
+  <div class="mb-3"><input name="password" type="password" class="form-control" placeholder="Пароль" required></div>
+  <div class="mb-3"><input name="confirm" type="password" class="form-control" placeholder="Подтвердите пароль" required></div>
+  <button type="submit" class="btn btn-main w-100">Зарегистрироваться</button>
+</form>
+{% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
+{% else %}
+<p>Приглашение не найдено или устарело.</p>
+{% endif %}
+{% endblock %} 

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}{{ _('Уведомления') }}{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card p-4 mt-4">
+      <h2 class="mb-4">{{ _('Уведомления') }}</h2>
+      <ul class="list-group">
+        {% for note in notifications %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <span>{{ note.text }}</span>
+          {% if not note.is_read %}
+          <form method="POST" action="/read_notification/{{ note.id }}">
+            <button type="submit" class="btn btn-success btn-sm">{{ _('Прочитано') }}</button>
+          </form>
+          {% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %} 

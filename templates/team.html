@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}Команда{% endblock %}
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4"><i class="bi bi-people"></i> Команда</h2>
+    
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Имя</th>
+                            <th>Должность</th>
+                            <th>Телефон</th>
+                            <th>Организация</th>
+                            {% if user.role == 'Шеф-повар' %}
+                            <th>Действия</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for employee in users %}
+                        <tr>
+                            <td>
+                                {% if employee.avatar %}
+                                <img src="{{ url_for('static', filename='avatars/' ~ employee.avatar) }}" alt="Аватар" class="rounded-circle me-2" width="32" height="32">
+                                {% else %}
+                                <img src="https://ui-avatars.com/api/?name={{ employee.name|urlencode }}&size=32" alt="Аватар" class="rounded-circle me-2">
+                                {% endif %}
+                                {{ employee.name }}
+                            </td>
+                            <td>{{ employee.role }}</td>
+                            <td>{{ employee.phone }}</td>
+                            <td>{{ employee.org }}</td>
+                            {% if user.role == 'Шеф-повар' and employee.name != user.name %}
+                            <td>
+                                <form method="POST" style="display: inline;" onsubmit="return confirm('Вы уверены, что хотите удалить сотрудника {{ employee.name }}?');">
+                                    <input type="hidden" name="remove_name" value="{{ employee.name }}">
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        <i class="bi bi-trash"></i> Удалить
+                                    </button>
+                                </form>
+                            </td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

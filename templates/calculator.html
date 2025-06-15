@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}Калькулятор рецептов - ChefApp{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4"><i class="bi bi-calculator"></i> Калькулятор рецептов</h2>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Добавить ингредиент</h5>
+                    <form id="ingredientForm">
+                        <div class="mb-3">
+                            <label for="ingredientName" class="form-label">Название продукта</label>
+                            <input type="text" class="form-control" id="ingredientName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="ingredientPrice" class="form-label">Цена за кг (₽)</label>
+                            <input type="number" class="form-control" id="ingredientPrice" step="0.01" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="ingredientAmount" class="form-label">Количество (г)</label>
+                            <input type="number" class="form-control" id="ingredientAmount" required>
+                        </div>
+                        <button type="submit" class="btn btn-main">Добавить</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Итоговый расчет</h5>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Продукт</th>
+                                    <th>Цена за кг</th>
+                                    <th>Количество</th>
+                                    <th>Стоимость</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="ingredientsList">
+                                <!-- Здесь будут отображаться ингредиенты -->
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Итого:</strong></td>
+                                    <td><strong id="totalCost">0.00 ₽</strong></td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <div class="d-flex justify-content-between mt-3">
+                        <button class="btn btn-outline-danger" onclick="clearCalculator()">
+                            <i class="bi bi-trash"></i> Очистить
+                        </button>
+                        <button class="btn btn-outline-primary" onclick="saveRecipe()">
+                            <i class="bi bi-save"></i> Сохранить рецепт
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+let ingredients = [];
+
+document.getElementById('ingredientForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const name = document.getElementById('ingredientName').value;
+    const pricePerKg = parseFloat(document.getElementById('ingredientPrice').value);
+    const amount = parseInt(document.getElementById('ingredientAmount').value);
+    
+    // Рассчитываем стоимость для указанного количества грамм
+    const cost = (pricePerKg * amount) / 1000;
+    
+    ingredients.push({
+        name: name,
+        pricePerKg: pricePerKg,
+        amount: amount,
+        cost: cost
+    });
+    
+    updateIngredientsList();
+    this.reset();
+});
+
+function updateIngredientsList() {
+    const tbody = document.getElementById('ingredientsList');
+    tbody.innerHTML = '';
+    
+    let total = 0;
+    
+    ingredients.forEach((ingredient, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${ingredient.name}</td>
+            <td>${ingredient.pricePerKg.toFixed(2)} ₽</td>
+            <td>${ingredient.amount} г</td>
+            <td>${ingredient.cost.toFixed(2)} ₽</td>
+            <td>
+                <button class="btn btn-sm btn-outline-danger" onclick="removeIngredient(${index})">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </td>
+        `;
+        tbody.appendChild(row);
+        total += ingredient.cost;
+    });
+    
+    document.getElementById('totalCost').textContent = `${total.toFixed(2)} ₽`;
+}
+
+function removeIngredient(index) {
+    ingredients.splice(index, 1);
+    updateIngredientsList();
+}
+
+function clearCalculator() {
+    if (confirm('Вы уверены, что хотите очистить калькулятор?')) {
+        ingredients = [];
+        updateIngredientsList();
+    }
+}
+
+function saveRecipe() {
+    if (ingredients.length === 0) {
+        alert('Добавьте хотя бы один ингредиент');
+        return;
+    }
+    
+    const recipeName = prompt('Введите название рецепта:');
+    if (!recipeName) return;
+    
+    const recipe = {
+        name: recipeName,
+        ingredients: ingredients,
+        totalCost: ingredients.reduce((sum, ing) => sum + ing.cost, 0)
+    };
+    
+    // Здесь можно добавить сохранение рецепта
+    alert('Рецепт сохранен!');
+}
+</script>
+{% endblock %}
+{% endblock %} 

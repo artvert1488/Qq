@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}{{ _('Детали задачи') }}{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card p-4 mt-4">
+      <h2 class="mb-4">{{ task.description }}</h2>
+      <div class="mb-3">{{ _('Исполнитель') }}: {{ task.user.name }}</div>
+      <div class="mb-3">{{ _('Статус') }}: {% if task.is_done %}<span class="badge bg-success">{{ _('Выполнено') }}</span>{% else %}<span class="badge bg-warning">{{ _('В работе') }}</span>{% endif %}</div>
+      {% if task.file %}
+        <a href="/download/task/{{ task.file }}" class="btn btn-link btn-sm">{{ _('Скачать вложение') }}</a>
+      {% endif %}
+      <hr>
+      <h5>{{ _('Комментарии') }}</h5>
+      <form method="POST">
+        {{ comment_form.hidden_tag() }}
+        <div class="mb-3">{{ comment_form.text(class="form-control", placeholder=_('Добавить комментарий...')) }}</div>
+        <button type="submit" class="btn btn-main">{{ _('Добавить') }}</button>
+      </form>
+      <ul class="list-group mt-3">
+        {% for comment in task.comments %}
+        <li class="list-group-item">
+          <strong>{{ comment.author.name }}</strong> <span class="text-muted small">{{ comment.created_at.strftime('%d.%m %H:%M') }}</span><br>
+          {{ comment.text }}
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %} 
